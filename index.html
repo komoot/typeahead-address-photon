@@ -1,0 +1,117 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Debug of typeahead-address-photon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      #map {
+        height: 400px
+      }
+    </style>
+  </head>
+  <body class="container">
+    <h1>Type address</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <form>
+          <input id="inpAddress" class="form-control" type="text" placeholder="Enter address here..."></input>
+        </form>
+      </div>
+      <div id="map" class="col-md-6"></div>
+    </div>
+  </body>
+</html>
+
+<!-- Vendor styles -->
+<link
+  rel="stylesheet"
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+  crossorigin="anonymous">
+<link
+  rel="stylesheet"
+  href="https://rawgit.com/bassjobsen/typeahead.js-bootstrap-css/master/typeaheadjs.css" />
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.0.2/dist/leaflet.css" />
+
+<!-- Vendor Javascripts -->
+<script
+  src="https://code.jquery.com/jquery-3.1.1.js"
+  integrity="sha256-16cdPddA6VdVInumRGo6IbivbERE8p7CQR3HzTBuELA="
+  crossorigin="anonymous"></script>
+<script
+  src="https://rawgit.com/corejavascript/typeahead.js/master/dist/typeahead.bundle.js"></script>
+<script
+  src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+  integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+  crossorigin="anonymous"></script>
+<script src="https://unpkg.com/leaflet@1.0.2/dist/leaflet.js"></script>
+
+<!-- Developed script -->
+<script src="https://rawgit.com/komoot/typeahead-address-photon/master/src/typeahead-address-photon.js"></script>
+
+<!-- Test script -->
+<script>
+  var map = L.map('map').setView([48.847547, 2.351074], 14),
+      markers = L.featureGroup();
+
+  L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      zoomControl: true,
+      maxZoom: 18
+  }).addTo(map);
+
+  markers.addTo(map);
+
+  function showPredictions(event, predictions) {
+    map.removeLayer(markers);
+    markers = L.featureGroup();
+    markers.addTo(map);
+
+    predictions.forEach(function (prediction) {
+      L.marker([ prediction.geometry.coordinates[1],
+                 prediction.geometry.coordinates[0] ]).addTo(markers);
+      map.fitBounds(markers.getBounds());
+    });
+  }
+
+  var engine = new PhotonAddressEngine({
+    url: 'https://photon.komoot.de',
+    lang: 'fr',
+    lat: 48.847547,
+    lon: 2.351074,
+    onPredictions: showPredictions
+  });
+
+  function showSelected(event, selected) {
+    $('#inpAddress').val(selected.description);
+
+    map.removeLayer(markers);
+    markers = L.featureGroup();
+    markers.addTo(map);
+
+    L.marker([
+      selected.geometry.coordinates[1],
+      selected.geometry.coordinates[0]
+    ], {
+      draggable: true
+    }).on('dragend', function (event) {
+      var pos = event.target.getLatLng();
+      engine.reverseGeocode([ pos.lat, pos.lng ]);
+    }).addTo(markers);
+    map.fitBounds(markers.getBounds());
+  }
+
+  $('#inpAddress').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 3
+  }, {
+    source: engine.ttAdapter(),
+    displayKey: 'description'
+  });
+
+  engine.bindDefaultTypeaheadEvent($('#inpAddress'));
+  $(engine).bind('addresspicker:predictions', showPredictions);
+  $(engine).bind('addresspicker:selected', showSelected);
+</script>
