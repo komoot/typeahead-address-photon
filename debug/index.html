@@ -1,0 +1,101 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Debug of typeahead-address-photon</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+      #map {
+        height: 400px
+      }
+    </style>
+  </head>
+  <body class="container">
+    <h1>Type address</h1>
+    <div class="row">
+      <div class="col-md-6">
+        <form>
+          <input id="inpAddress" class="form-control" type="text" placeholder="Enter address here..."></input>
+        </form>
+      </div>
+      <div id="map" class="col-md-6"></div>
+    </div>
+  </body>
+</html>
+
+<!-- Vendor styles -->
+<link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.css" />
+<link rel="stylesheet" href="../node_modules/typeahead.js-bootstrap-css/typeaheadjs.css" />
+<link rel="stylesheet" href="../node_modules/leaflet/dist/leaflet.css" />
+
+<!-- Vendor Javascripts -->
+<script src="../node_modules/jquery/dist/jquery.js"></script>
+<script src="../node_modules/corejs-typeahead/dist/typeahead.bundle.js"></script>
+<script src="../node_modules/bootstrap/dist/js/bootstrap.js"></script>
+<script src="../node_modules/leaflet/dist/leaflet-src.js"></script>
+
+<!-- Developed script -->
+<script src="../src/typeahead-address-photon.js"></script>
+
+<!-- Test script -->
+<script>
+  var map = L.map('map').setView([48.847547, 2.351074], 14),
+      markers = L.featureGroup();
+
+  L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
+      zoomControl: true,
+      maxZoom: 18
+  }).addTo(map);
+
+  markers.addTo(map);
+
+  function showPredictions(event, predictions) {
+    map.removeLayer(markers);
+    markers = L.featureGroup();
+    markers.addTo(map);
+
+    predictions.forEach(function (prediction) {
+      L.marker([ prediction.geometry.coordinates[1],
+                 prediction.geometry.coordinates[0] ]).addTo(markers);
+      map.fitBounds(markers.getBounds());
+    });
+  }
+
+  var engine = new PhotonAddressEngine({
+    lang: 'fr',
+    lat: 48.847547,
+    lon: 2.351074,
+    onPredictions: showPredictions
+  });
+
+  function showSelected(event, selected) {
+    $('#inpAddress').val(selected.description);
+
+    map.removeLayer(markers);
+    markers = L.featureGroup();
+    markers.addTo(map);
+
+    L.marker([
+      selected.geometry.coordinates[1],
+      selected.geometry.coordinates[0]
+    ], {
+      draggable: true
+    }).on('dragend', function (event) {
+      var pos = event.target.getLatLng();
+      engine.reverseGeocode([ pos.lat, pos.lng ]);
+    }).addTo(markers);
+    map.fitBounds(markers.getBounds());
+  }
+
+  $('#inpAddress').typeahead({
+    hint: true,
+    highlight: true,
+    minLength: 3
+  }, {
+    source: engine.ttAdapter(),
+    displayKey: 'description'
+  });
+
+  engine.bindDefaultTypeaheadEvent($('#inpAddress'));
+  $(engine).bind('addresspicker:predictions', showPredictions);
+  $(engine).bind('addresspicker:selected', showSelected);
+</script>

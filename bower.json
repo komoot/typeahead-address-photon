@@ -1,0 +1,28 @@
+{
+  "name": "typeahead-address-photon",
+  "version": "0.0.1",
+  "description": "Address picker built with typeahead autocomplete using http://photon.komoot.de/",
+  "main": "dist/typeahead-address-photon.js",
+  "authors": [
+    "Alexei KLENIN"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "typeahead",
+    "address",
+    "photon",
+    "places",
+    "picker",
+    "bloodhound"
+  ],
+  "homepage": "https://github.com/komoot/typeahead-address-photon",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "debug",
+    "spec",
+    "src",
+    "gulpfile.js"
+  ]
+}

@@ -1,0 +1,43 @@
+{
+  "name": "typeahead-address-photon",
+  "version": "0.0.1",
+  "description": "Address picker built with typeahead autocomplete using http://photon.komoot.de/",
+  "main": "dist/typeahead-address-photon.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/komoot/typeahead-address-photon.git"
+  },
+  "keywords": [
+    "typeahead",
+    "address",
+    "photon",
+    "places",
+    "picker",
+    "bloodhound"
+  ],
+  "author": "Alexei KLENIN",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/komoot/typeahead-address-photon/issues"
+  },
+  "homepage": "https://github.com/komoot/typeahead-address-photon#readme",
+  "devDependencies": {
+    "bootstrap": "^3.3.7",
+    "corejs-typeahead": "^0.11.1",
+    "gulp": "^3.9.1",
+    "gulp-jasmine": "^2.4.2",
+    "gulp-jshint": "^2.0.2",
+    "gulp-rename": "^1.2.2",
+    "gulp-strip-code": "^0.1.4",
+    "gulp-uglify": "^2.0.0",
+    "gulp-webserver": "^0.9.1",
+    "jasmine-expect": "^3.0.1",
+    "jasmine-http-server-spy": "^0.3.0",
+    "jquery": "^3.1.0",
+    "jsdom": "^9.8.3",
+    "jshint": "^2.9.4",
+    "jshint-stylish": "^2.2.1",
+    "leaflet": "^1.0.1",
+    "typeahead.js-bootstrap-css": "^1.2.1"
+  }
+}
