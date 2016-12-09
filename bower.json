@@ -1,6 +1,6 @@
 {
   "name": "typeahead-address-photon",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "Address picker built with typeahead autocomplete using http://photon.komoot.de/",
   "main": "dist/typeahead-address-photon.js",
   "authors": [
