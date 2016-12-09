@@ -1,4 +1,4 @@
-# typeahead-address-photon
+# typeahead-address-photon [![npm](https://img.shields.io/npm/v/typeahead-address-photon.svg)](http://npm.im/typeahead-address-photon) 
 
 Copy of famous [typeahead-addresspicker](https://github.com/sgruhier/typeahead-addresspicker)
 but using free and Open-Source place search service http://photon.komoot.de/.
