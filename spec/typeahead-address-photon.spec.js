@@ -1,11 +1,11 @@
-var jsdom = require('jsdom'),
-    jasmineHttpServerSpy = require('jasmine-http-server-spy'),
-    jasmine_expect = require('jasmine-expect');
+const jsdom = require('jsdom');
+const jasmineHttpServerSpy = require('jasmine-http-server-spy');
 const { JSDOM } = jsdom;
 
-describe('typeahead-address-photon suite', function () {
+require('jasmine-expect');
 
-  var $,
+describe('typeahead-address-photon suite', () => {
+  let $,
       PhotonAddressEngine,
       httpSpy;
 
@@ -25,7 +25,7 @@ describe('typeahead-address-photon suite', function () {
         });
   });
 
-  beforeAll(function startupMockServer(done) {
+  beforeAll(done => {
     httpSpy = jasmineHttpServerSpy.createSpyObj('mockServer', [{
       method: 'get',
       url: '/api/',
@@ -38,19 +38,18 @@ describe('typeahead-address-photon suite', function () {
     httpSpy.server.start(8082, done);
   });
 
-  afterAll(function shutdownMockServer(done) {
+  afterAll(() => {
     httpSpy.server.stop();
-    done();
   });
 
-  afterEach(function resetMockServer() {
+  afterEach(() => {
     httpSpy.getSuggestions.calls.reset();
   });
 
-  it('Test default formatType function', function () {
+  it('Test default formatType function', () => {
 
     // Given
-    var engine = new PhotonAddressEngine(),
+    const engine = new PhotonAddressEngine(),
         feature = {
          'geometry':{
             'coordinates':[
@@ -80,16 +79,17 @@ describe('typeahead-address-photon suite', function () {
       };
 
     // when
-    var formattedType = engine.__testonly__.defaultFormatType(feature);
+    const formattedType = engine.__testonly__.defaultFormatType(feature);
 
     // Then
-    expect(formattedType).toBe('unclassified');
+    expect(formattedType)
+        .toBe('unclassified');
   });
 
-  it('Test default formatResult function', function () {
+  it('Test default formatResult function', () => {
 
     // Given
-    var engine = new PhotonAddressEngine(),
+    const engine = new PhotonAddressEngine(),
         feature = {
          'geometry':{
             'coordinates':[
@@ -119,16 +119,17 @@ describe('typeahead-address-photon suite', function () {
       };
 
     // When
-    var formattedFeature = engine.__testonly__.defaultFormatResult(feature);
+    const formattedFeature = engine.__testonly__.defaultFormatResult(feature);
 
     // Then
-    expect(formattedFeature).toBe('Voie Communale n°5 de Cluny à Cortambert, unclassified, Cortambert, France');
+    expect(formattedFeature)
+        .toBe('Voie Communale n°5 de Cluny à Cortambert, unclassified, Cortambert, France');
   });
 
-  it('Test basic query', function (done) {
+  it('Test basic query', done => {
 
     // Given
-    var engine = new PhotonAddressEngine({
+    const engine = new PhotonAddressEngine({
           url: 'http://localhost:8082'
         }),
         asyncHandlerCalled = $.Deferred(),
@@ -174,18 +175,18 @@ describe('typeahead-address-photon suite', function () {
     });
 
     // When
-    $(engine).bind('addresspicker:predictions', function (event, predictions) {
+    $(engine).bind('addresspicker:predictions', (event, predictions) => {
       predictionsEventFired.resolve(predictions);
     });
 
     engine.ttAdapter()(
       'berlin',
-      function sync(syncResults) {},
+      () => {},
       asyncHandlerCalled.resolve);
 
     // Then
     $.when(asyncHandlerCalled, predictionsEventFired)
-      .then(function (res1, res2) {
+      .then((res1, res2) => {
         expect(httpSpy.getSuggestions).toHaveBeenCalledWith(
           jasmine.objectContaining({
             query: {
@@ -205,16 +206,16 @@ describe('typeahead-address-photon suite', function () {
       });
   });
 
-  it('Test query with all parameters', function (done) {
+  it('Test query with all parameters', done => {
 
     // Given
-    var engine = new PhotonAddressEngine({
+    const engine = new PhotonAddressEngine({
           url: 'http://localhost:8082',
           limit: 42,
           lat: 48.847547,
           lon: 2.351074,
           lang: 'fr',
-          formatResult: function (feature) {
+          formatResult: (feature) => {
             return 'City of ' + feature.properties.name + ' in ' + feature.properties.country;
           }
         }),
@@ -261,8 +262,8 @@ describe('typeahead-address-photon suite', function () {
         // When
         engine.ttAdapter()(
           'berlin',
-          function sync(syncResults) {},
-          function async(asyncResults) {
+          () => {},
+          (asyncResults) => {
 
             // Then
             expect(httpSpy.getSuggestions).toHaveBeenCalledWith(
@@ -285,10 +286,10 @@ describe('typeahead-address-photon suite', function () {
           });
   });
 
-  it('Test reverse geocoding', function (done) {
+  it('Test reverse geocoding', done => {
 
     // Given
-    var engine = new PhotonAddressEngine({
+    const engine = new PhotonAddressEngine({
           url: 'http://localhost:8082'
         }),
         response = {
@@ -354,7 +355,7 @@ describe('typeahead-address-photon suite', function () {
     });
 
     // Then
-    $(engine).bind('addresspicker:selected', function then(event, selected) {
+    $(engine).bind('addresspicker:selected', (event, selected) => {
       expect(selected).toBeObject();
       expect(selected).toBeNonEmptyObject();
       expect(selected.description).toBe('Centre culturel Coréen, yes, Paris, France');
