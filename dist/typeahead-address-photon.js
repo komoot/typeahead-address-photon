@@ -1,7 +1,5 @@
-!(function (root, $, Bloodhound) {
-
+const func = function (root, $, Bloodhound) {
   'use strict';
-
   /**
    * Default function that returns string representation of OSM place type.
    * Used by default implementation of method formatResult.
@@ -10,10 +8,10 @@
    *
    * @return formatted string representation of OSM place type
    */
+
   var _formatType = function (feature) {
     return feature.properties.osm_value;
   };
-
   /**
    * Supplier of default formatResult function.
    *
@@ -21,6 +19,8 @@
    *
    * @return default implementation of formatResult function
    */
+
+
   var _formatResultSupplier = function (formatType) {
     return function (feature) {
       var formatted = feature.properties.name,
@@ -30,8 +30,7 @@
         formatted += ', ' + type;
       }
 
-      if (feature.properties.city &&
-            feature.properties.city !== feature.properties.name) {
+      if (feature.properties.city && feature.properties.city !== feature.properties.name) {
         formatted += ', ' + feature.properties.city;
       }
 
@@ -42,14 +41,13 @@
       return formatted;
     };
   };
-
   /**
    * Constructor of suggestion engine. Take options as litteral object. All
    * options are optionals.
    *
    * @param options#url URL of the Photon API to use. Default:
    *        'http://photon.komoot.de'
-   * @param options#limit limit number of results
+   * @param options#limit limit number of results. Default: 5
    * @param options#formatResult function to control the way geojson features
    *        are displayed in the results box
    * @param options#formatType function to control the way features types
@@ -59,12 +57,13 @@
    *        priority to a geo position
    * @param options#lang preferred language
    */
+
+
   root.PhotonAddressEngine = function (options) {
     options = options || {};
 
     var formatType = options.formatType || _formatType,
-        formatResult = options.formatResult ||
-          _formatResultSupplier(formatType),
+        formatResult = options.formatResult || _formatResultSupplier(formatType),
         url = options.url || 'http://photon.komoot.de',
         limit = options.limit || 5,
         reqParams = {};
@@ -79,14 +78,11 @@
     }
 
     reqParams.limit = limit;
-
     var bloodhound = new Bloodhound({
       local: [],
       queryTokenizer: Bloodhound.tokenizers.nonword,
       datumTokenizer: function (feature) {
-        return Bloodhound.tokenizers.obj.whitespace([
-          'country', 'city', 'postcode', 'name', 'state'
-        ])(feature.properties);
+        return Bloodhound.tokenizers.obj.whitespace(['country', 'city', 'postcode', 'name', 'state'])(feature.properties);
       },
       identify: function (feature) {
         return feature.properties.osm_id;
@@ -101,17 +97,15 @@
         },
         transform: function (response) {
           var self = this;
-
           response.features.forEach(function (feature) {
             feature.description = formatResult(feature);
           });
-
           return response.features || [];
         }
       }
     });
-
     /* Redefine bloodhound.search(query, sync, async) function */
+
     var _oldSearch = bloodhound.search;
 
     bloodhound.search = function (query, sync, async) {
@@ -124,17 +118,13 @@
         asyncPromise.resolve(datums);
       });
 
-      $.when(syncPromise, asyncPromise)
-        .then(function (syncResults, asyncResults) {
-          var allResults = [].concat(syncResults, asyncResults);
-
-          $(bloodhound).trigger('addresspicker:predictions', [ allResults ]);
-
-          sync(syncResults);
-          async(asyncResults);
-        });
+      $.when(syncPromise, asyncPromise).then(function (syncResults, asyncResults) {
+        var allResults = [].concat(syncResults, asyncResults);
+        $(bloodhound).trigger('addresspicker:predictions', [allResults]);
+        sync(syncResults);
+        async(asyncResults);
+      });
     };
-
     /**
      * Transforms default typeahead event typeahead:selected to
      * addresspicker:selected. The same event is triggered by
@@ -142,18 +132,21 @@
      *
      * @param typeahead jquery wrapper around address input
      */
+
+
     bloodhound.bindDefaultTypeaheadEvent = function (typeahead) {
       typeahead.bind('typeahead:selected', function (event, place) {
-        $(bloodhound).trigger('addresspicker:selected', [ place ]);
+        $(bloodhound).trigger('addresspicker:selected', [place]);
       });
     };
-
     /**
      * Makes reverse geocoding of position and triggers event
      * addresspicker:selected with result.
      *
      * @param position array with latitude & longitude
      */
+
+
     bloodhound.reverseGeocode = function (position) {
       $.get(url + '/reverse', {
         lat: position[0],
@@ -162,13 +155,20 @@
         if (response.features) {
           var feature = response.features[0];
           feature.description = formatResult(feature);
-
-          $(bloodhound).trigger('addresspicker:selected', [ feature ]);
+          $(bloodhound).trigger('addresspicker:selected', [feature]);
         }
       });
     };
+    /* test-code */
+
+
+    bloodhound.__testonly__ = {};
+    bloodhound.__testonly__.defaultFormatType = _formatType;
+    bloodhound.__testonly__.defaultFormatResult = _formatResultSupplier(_formatType);
+    /* end-test-code */
 
     return bloodhound;
   };
+};
 
-})(this, jQuery, Bloodhound);
+func(this, jQuery, Bloodhound);

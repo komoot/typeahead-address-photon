@@ -1,6 +1,7 @@
 var jsdom = require('jsdom'),
     jasmineHttpServerSpy = require('jasmine-http-server-spy'),
     jasmine_expect = require('jasmine-expect');
+const { JSDOM } = jsdom;
 
 describe('typeahead-address-photon suite', function () {
 
@@ -8,23 +9,20 @@ describe('typeahead-address-photon suite', function () {
       PhotonAddressEngine,
       httpSpy;
 
-  beforeAll(function loadScripts(done) {
-    jsdom.env({
-      html: '<html><body></body></html>',
-      scripts: [ 'node_modules/jquery/dist/jquery.js',
-                 'node_modules/corejs-typeahead/dist/typeahead.bundle.js',
-                 'src/typeahead-address-photon.js' ],
-      done: function (err, window) {
-        if (err) {
-          console.err(err);
-        }
+  beforeAll(done => {
+    JSDOM
+        .fromFile('spec/index.html', {
+          resources: 'usable',
+          runScripts: 'dangerously'
+        })
+        .then((dom) => {
+          setTimeout(() => {
+            $ = dom.window.$;
+            PhotonAddressEngine = dom.window.PhotonAddressEngine;
 
-        $ = window.$;
-        PhotonAddressEngine = window.PhotonAddressEngine;
-
-        done();
-      }
-    });
+            done();
+          }, 1000);
+        });
   });
 
   beforeAll(function startupMockServer(done) {
@@ -43,8 +41,7 @@ describe('typeahead-address-photon suite', function () {
   afterAll(function shutdownMockServer(done) {
     httpSpy.server.stop();
     done();
-    process.exit();   // hack to stop Express server
-  })
+  });
 
   afterEach(function resetMockServer() {
     httpSpy.getSuggestions.calls.reset();
@@ -218,8 +215,7 @@ describe('typeahead-address-photon suite', function () {
           lon: 2.351074,
           lang: 'fr',
           formatResult: function (feature) {
-            return 'City of ' + feature.properties.name + ' in '
-              + feature.properties.country;
+            return 'City of ' + feature.properties.name + ' in ' + feature.properties.country;
           }
         }),
         response = {

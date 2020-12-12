@@ -1,4 +1,4 @@
-!(function (root, $, Bloodhound) {
+const func = function (root, $, Bloodhound) {
 
   'use strict';
 
@@ -177,4 +177,6 @@
     return bloodhound;
   };
 
-})(this, jQuery, Bloodhound);
+};
+
+func(this, jQuery, Bloodhound);
