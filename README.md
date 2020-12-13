@@ -1,7 +1,7 @@
 # typeahead-address-photon [![npm](https://img.shields.io/npm/v/typeahead-address-photon.svg)](http://npm.im/typeahead-address-photon) 
 
 Copy of famous [typeahead-addresspicker](https://github.com/sgruhier/typeahead-addresspicker)
-but using free and Open-Source place search service http://photon.komoot.io/.
+but using free and Open-Source place search service https://photon.komoot.io/.
 
 Provides `PhotonAddressEngine`, an implementation of suggestions engine [Bloodhound](https://github.com/twitter/typeahead.js/blob/master/doc/bloodhound.md) (from corejs-typeahead).
 
@@ -41,7 +41,7 @@ $('#inpAddress').typeahead(null, {
 
 ### Options
 `PhotonAddressEngine` constructor accepts object with options. The following options can be provided :
-- `url` - URL of the Photon API to use. *Default: 'http://photon.komoot.io'*
+- `url` - URL of the Photon API to use. *Default: 'https://photon.komoot.io'*
 - `limit` - limit number of results. *Default: 5*
 - `formatResult` - function to control the way geojson features are displayed in the results box
 - `formatType` - function to control the way features types (amenity, school, etc.) are displayed in the default formatResult function
