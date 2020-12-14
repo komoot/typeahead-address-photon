@@ -48,7 +48,7 @@
      * options are optionals.
      *
      * @param options#url URL of the Photon API to use. Default:
-     *        'http://photon.komoot.de'
+     *        'http://photon.komoot.io'
      * @param options#limit limit number of results. Default: 5
      * @param options#formatResult function to control the way geojson features
      *        are displayed in the results box
@@ -66,7 +66,7 @@
 
       var formatType = options.formatType || _formatType,
           formatResult = options.formatResult || _formatResultSupplier(formatType),
-          url = options.url || 'http://photon.komoot.de',
+          url = options.url || 'http://photon.komoot.io',
           limit = options.limit || 5,
           reqParams = {};
 
