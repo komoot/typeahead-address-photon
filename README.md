@@ -16,13 +16,11 @@ Plugin provides convinient hooks if you wanna make other processing of suggested
 Check out the [demo](http://komoot.github.io/typeahead-address-photon/).
 
 ## How to use
-Include jQuery, corejs-typeahead & typeahead-address-photon on your page :
-```xml
-<!-- We assume vendor_scripts to be a folder with third party libraries
-     (often node_modules or bower_components) -->
-<script src="vendor_scripts/jquery/dist/jquery.js"></script>
-<script src="vendor_scripts/corejs-typeahead/dist/typeahead.bundle.js"></script>
-<script src="vendor_scripts/typeahead-address-photon/dist/typeahead-address-photon.js"></script>
+Include `jQuery`, `corejs-typeahead` & `typeahead-address-photon` on your page :
+```html
+<script src="node_modules/jquery/dist/jquery.js"></script>
+<script src="node_modules/corejs-typeahead/dist/typeahead.bundle.js"></script>
+<script src="node_modules/typeahead-address-photon/dist/bundle.js"></script>
 ```
 Add text input for address :
 ```xml
